@@ -14,6 +14,8 @@ class CommandParser:
     # Я попробовал наверное 5 разных вариантов, каждый из которых в сущности
     # подразумевал повторение одного и того же кода с незначительными изменениями
     # для каждой команды, и решил, что представленный ниже – наиболее удачный
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.aggregation=}, {self.filter=}, {self.order_by=})'
 
     def _parse_command(self, regex: str, input: str) -> tuple | None:
         match = re.search(regex, input)
@@ -28,9 +30,9 @@ class CommandParser:
             raise ValueError('aggregation: Not found:', self._raw.aggregation)
 
     def parse_filter(self) -> commands.FilterCommand | None:
-        if self._raw.filter is not None:
+        if self._raw.where is not None:
             re = r'^(.*?)([<>=])(.*?)$'
-            args = self._parse_command(re, self._raw.filter)
+            args = self._parse_command(re, self._raw.where)
             if args:
                 return commands.FilterCommand(*args)
             raise ValueError('filter: Not found:', self._raw.filter)
