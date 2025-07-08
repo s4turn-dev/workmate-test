@@ -13,7 +13,8 @@ if __name__ == '__main__':
 
     cmdparser = CommandParser(args)
 
-    csv = CSV(args.file)
+    csv = CSV()
+    csv.load_from_file(args.file)
 
     if args.aggregation:
         csv.aggregate(*cmdparser.aggregation)
