@@ -73,6 +73,6 @@ class CSV:
 
     @_validate_column
     def order_by(self, column: str, order: str) -> Self:
-        self.data = sorted(self.data, key=lambda row: row[column], reverse=order=='desc')
+        self.data = sorted(self.data, key=lambda row: row[column], reverse=order.lower()=='desc')
         return self
 
