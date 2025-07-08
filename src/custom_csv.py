@@ -17,8 +17,8 @@ class CSV:
     def load_from_file(self, filename: str):
         with open(filename, 'r', encoding='utf=8', newline='') as file:
             reader = csv.DictReader(file)
-        self.data = list(reader)
-        self.columns = reader.fieldnames
+            self.data = list(reader)
+            self.columns = reader.fieldnames
         self.normalize_numericals()
 
     def normalize_numericals(self):
