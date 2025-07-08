@@ -30,7 +30,7 @@ class CSV:
     @staticmethod
     def _validate_column(function):
         def inner(self, *args, **kwargs):
-            column = kwargs.get('column') or (args[0] if args else None) # This looks terrible but I really kinda
+            column = kwargs.get('column') or (args[0] if args else None) # This looks ugly but I really kinda
                                                                          # want to keep the decorator as it is... 
             if column in self.columns:
                 return function(self, *args, **kwargs)
@@ -53,6 +53,8 @@ class CSV:
             case _:
                 raise ValueError('aggregate: Unsupported function:', function)
         self.data = [row for row in self.data if row[column] == target]
+        # Before even writing any code I decided I want to be able to chain commands,
+        # akin to SQLAlchemy (Model.filter().first()...) – hence the self returns
         return self
 
     @_validate_column
