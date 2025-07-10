@@ -1,5 +1,5 @@
 import csv
-from typing import Self, TextIO
+from typing import Self
 
 from tabulate import tabulate
 
