@@ -9,12 +9,12 @@ class CommandParser:
         self.filter = self.parse_filter()
         self.order_by = self.parse_order_by()
 
-    # Я попробовал наверное 5 разных вариантов, каждый из которых в сущности
-    # подразумевал повторение одного и того же кода с незначительными изменениями
-    # для каждой команды, и решил, что представленный ниже – наиболее удачный
     def __repr__(self):
         return f'{self.__class__.__name__}(aggregation={self.aggregation}, filter={self.filter}, order_by={self.order_by})'
 
+    # Я попробовал наверное 5 разных вариантов, каждый из которых в сущности
+    # подразумевал повторение одного и того же кода с незначительными изменениями
+    # для каждой команды, и решил, что представленный ниже – наиболее удачный
     def _parse_command(self, regex: str, input: str) -> tuple | None:
         match = re.search(regex, input, re.IGNORECASE)
         return match.groups() if match else None
