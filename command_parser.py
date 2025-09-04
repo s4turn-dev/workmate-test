@@ -16,7 +16,7 @@ class CommandParser:
         return f'{self.__class__.__name__}(aggregation={self.aggregation}, filter={self.filter}, order_by={self.order_by})'
 
     def _parse_command(self, regex: str, input: str) -> tuple | None:
-        match = re.search(regex, input)
+        match = re.search(regex, input, re.IGNORECASE)
         return match.groups() if match else None
     
     def parse_aggregation(self) -> tuple | None:
