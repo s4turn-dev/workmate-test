@@ -12,7 +12,6 @@ def argprs():
     return argprs
 
 
-# [AI SUGGESTED] Aggregation
 @pytest.mark.parametrize('aggregation,expected', [ 
     ('column=min', ('column', 'min')),
     ('column=max', ('column', 'max')),
