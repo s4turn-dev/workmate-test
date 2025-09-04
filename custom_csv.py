@@ -1,0 +1,78 @@
+import csv
+from typing import Self
+
+from tabulate import tabulate
+
+
+class CSV:
+    def __init__(self, filename: str):
+        with open(filename, 'r', encoding='utf=8', newline='') as file:
+            reader = csv.DictReader(file)
+            self.data = list(reader)
+            self.columns = reader.fieldnames
+        # The only way I thought of
+        num_keys = []
+        for key, _ in self.data[0].items():
+            try:
+                float(self.data[0][key])
+            except ValueError:
+                pass
+            else:
+                num_keys.append(key)
+        for i in range(len(self.data)):
+            for key in num_keys:
+                self.data[i][key] = float(self.data[i][key])
+
+
+    def __repr__(self):
+        return tabulate(self.data, headers={col: col for col in self.columns})
+
+    @staticmethod
+    def _validate_column(function):
+        def inner(self, *args, **kwargs):
+            column = kwargs.get('column') or (args[0] if args else None) # This looks terrible but I really kinda
+                                                                         # want to keep the decorator as it is... 
+            if column in self.columns:
+                return function(self, *args, **kwargs)
+            raise KeyError(f'{function.__name__}: Unknown column: {column}')
+        return inner
+
+    @_validate_column
+    def aggregate(self, column: str, function: str) -> Self:
+        all_nums = [row[column] for row in self.data]
+        match function:
+            case 'min':
+                target = min(all_nums)
+            case 'max':
+                target = max(all_nums)
+            case 'avg':
+                try:
+                    target = sum(all_nums) / len(all_nums)
+                except ZeroDivisionError:
+                    target = 1337
+            case _:
+                raise ValueError('aggregate: Unsupported function:', function)
+        self.data = [row for row in self.data if row[column] == target]
+        return self
+
+    @_validate_column
+    def filter(self, column: str, relation: str, value: str|float) -> Self:
+        match relation:
+            case '<':
+                value = float(value)
+                relation_check = lambda x,y: x<y
+            case '>':
+                value = float(value)
+                relation_check = lambda x,y: x>y
+            case '=':
+                relation_check = lambda x,y: x==y
+            case _:
+                raise ValueError('filter: Unsupported relation:', relation)
+        self.data = [row for row in self.data if relation_check(row[column], value)]
+        return self
+
+    @_validate_column
+    def order_by(self, column: str, order: str) -> Self:
+        self.data = sorted(self.data, key=lambda row: row[column], reverse=order=='desc')
+        return self
+

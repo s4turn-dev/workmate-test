@@ -10,7 +10,18 @@ if __name__ == '__main__':
     argparser.add_argument('--where')
     argparser.add_argument('--order-by')
     args = argparser.parse_args()
-    print(args)
 
     cmdparser = CommandParser(args)
-    print(cmdparser)
+
+    csv = CSV(args.file)
+
+    if args.aggregation:
+        csv.aggregate(*cmdparser.aggregation)
+
+    if args.where:
+        csv.filter(*cmdparser.filter)
+
+    if args.order_by:
+        csv.order_by(*cmdparser.order_by)
+    
+    print(csv)
