@@ -1,15 +1,27 @@
 import csv
-from typing import Self
+from typing import Self, TextIO
 
 from tabulate import tabulate
 
 
 class CSV:
-    def __init__(self, filename: str):
+    def __init__(self, filename: str | None = None):
+        self.data = []
+        self.columns = []
+        if filename:
+            self.load_from_file(filename)
+
+    def __repr__(self):
+        return tabulate(self.data, headers={col: col for col in self.columns})
+
+    def load_from_file(self, filename: str):
         with open(filename, 'r', encoding='utf=8', newline='') as file:
             reader = csv.DictReader(file)
-            self.data = list(reader)
-            self.columns = reader.fieldnames
+        self.data = list(reader)
+        self.columns = reader.fieldnames
+        self.normalize_numericals()
+
+    def normalize_numericals(self):
         # The only way I thought of
         num_keys = []
         for key, _ in self.data[0].items():
@@ -23,10 +35,6 @@ class CSV:
             for key in num_keys:
                 self.data[i][key] = float(self.data[i][key])
 
-
-    def __repr__(self):
-        return tabulate(self.data, headers={col: col for col in self.columns})
-
     @staticmethod
     def _validate_column(function):
         def inner(self, *args, **kwargs):
@@ -34,7 +42,7 @@ class CSV:
                                                                          # want to keep the decorator as it is... 
             if column in self.columns:
                 return function(self, *args, **kwargs)
-            raise KeyError(f'{function.__name__}: Unknown column: {column}')
+            raise ValueError(f'{function.__name__}: Unknown column: {column}')
         return inner
 
     @_validate_column
@@ -58,13 +66,17 @@ class CSV:
         return self
 
     @_validate_column
-    def filter(self, column: str, relation: str, value: str|float) -> Self:
+    def filter(self, column: str, relation: str, value: str) -> Self:
+        try:
+            # I'm not sure how bad this is, given the type hint ^
+            value = float(value)
+        except ValueError:
+            pass
+
         match relation:
             case '<':
-                value = float(value)
                 relation_check = lambda x,y: x<y
             case '>':
-                value = float(value)
                 relation_check = lambda x,y: x>y
             case '=':
                 relation_check = lambda x,y: x==y
@@ -75,6 +87,9 @@ class CSV:
 
     @_validate_column
     def order_by(self, column: str, order: str) -> Self:
-        self.data = sorted(self.data, key=lambda row: row[column], reverse=order.lower()=='desc')
+        order = order.lower()
+        if order not in ('asc', 'desc'):
+            raise ValueError(f'order_by: Unsupported option: {order}')
+        self.data = sorted(self.data, key=lambda row: row[column], reverse=order=='desc')
         return self
 
