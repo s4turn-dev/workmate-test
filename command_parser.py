@@ -15,7 +15,7 @@ class CommandParser:
     # подразумевал повторение одного и того же кода с незначительными изменениями
     # для каждой команды, и решил, что представленный ниже – наиболее удачный
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.aggregation=}, {self.filter=}, {self.order_by=})'
+        return f'{self.__class__.__name__}(aggregation={self.aggregation}, filter={self.filter}, order_by={self.order_by})'
 
     def _parse_command(self, regex: str, input: str) -> tuple | None:
         match = re.search(regex, input)
