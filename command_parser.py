@@ -25,15 +25,15 @@ class CommandParser:
             args = self._parse_command(re, self._raw.aggregation)
             if args:
                 return args
-            raise ValueError('aggregation: Not found:', self._raw.aggregation)
+            raise ValueError(f'aggregation: Not found: {self._raw.aggregation}')
 
     def parse_filter(self) -> tuple | None:
         if self._raw.where is not None:
-            re = r'^(.*?)([<>=])(.*?)$'
+            re = r'^(.*?)\s?([<>=])\s?(.*?)$'
             args = self._parse_command(re, self._raw.where)
             if args:
                 return args
-            raise ValueError('filter: Not found:', self._raw.where)
+            raise ValueError(f'filter: Not found: {self._raw.where}')
 
     def parse_order_by(self) -> tuple | None:
         if self._raw.order_by is not None:
@@ -41,5 +41,5 @@ class CommandParser:
             args = self._parse_command(re, self._raw.order_by)
             if args:
                 return args
-            raise ValueError('order by: Not found:', self._raw.order_by)
+            raise ValueError(f'order by: Not found: {self._raw.order_by}')
 
