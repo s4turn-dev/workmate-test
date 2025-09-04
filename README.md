@@ -4,6 +4,7 @@
 
 <details>
     <summary>ТЗ</summary>
+    https://docs.google.com/document/u/0/d/1nraUeVCkbsyvjNvMAWAwgrn7w3DXHsQf15QS1eZ2F1U/mobilebasic#heading=h.or54d8e34zbk
 </details>
 
 ## Содержание
