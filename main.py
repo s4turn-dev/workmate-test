@@ -1,21 +1,15 @@
-from custom_argparser import CustomArgumentParser
+from argparse import ArgumentParser
+from command_parser import CommandParser
 from custom_csv import CSV
 
-
-
 if __name__ == '__main__':
-    parser = CustomArgumentParser()
-    args = parser.parse_args()
+    argparser = ArgumentParser()
+    argparser.add_argument('--file', required=True)
+    argparser.add_argument('--aggregation')
+    argparser.add_argument('--where')
+    argparser.add_argument('--order-by')
+    args = argparser.parse_args()
     print(args)
 
-    if args.aggregation:
-        aggr = parser.parse_aggregation()
-        print(aggr)
-
-    if args.where:
-        filter = parser.parse_filter()
-        print(filter)
-
-    if args.order_by:
-        order = parser.parse_order_by()
-        print(order)
+    cmdparser = CommandParser(args)
+    print(cmdparser)
